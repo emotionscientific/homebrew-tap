@@ -1,0 +1,88 @@
+name: Update Cooldis
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 8 * * 1"
+
+concurrency:
+  group: update-cooldis
+
+jobs:
+  validate:
+    runs-on: macos-14
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      tag: ${{ steps.regenerate.outputs.tag }}
+
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Regenerate formula
+        id: regenerate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          result="$(scripts/update-cooldis.rb)"
+          printf '%s\n' "$result"
+          tag="${result##* }"
+          [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?$ ]]
+          printf 'tag=%s\n' "$tag" >>"$GITHUB_OUTPUT"
+
+      - name: Test updater
+        run: scripts/test-update-cooldis.sh
+
+      - name: Validate formula
+        run: |
+          brew tap emotionscientific/tap "$GITHUB_WORKSPACE"
+          brew style Formula/cooldis.rb
+          if grep -q '^  version "' Formula/cooldis.rb; then
+            brew audit --strict --except=version emotionscientific/tap/cooldis
+          else
+            brew audit --strict emotionscientific/tap/cooldis
+          fi
+
+      - name: Install and test formula
+        run: |
+          brew install emotionscientific/tap/cooldis
+          brew test emotionscientific/tap/cooldis
+
+  update:
+    needs: validate
+    runs-on: macos-14
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Regenerate validated formula
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/update-cooldis.rb --tag "${{ needs.validate.outputs.tag }}"
+
+      - name: Test updater
+        run: scripts/test-update-cooldis.sh
+
+      - name: Commit formula update
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- Formula/cooldis.rb; then
+            echo "Formula is already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          gh auth setup-git
+          git add Formula/cooldis.rb
+          test "$(git diff --cached --name-only)" = "Formula/cooldis.rb"
+          git commit -m "Update cooldis formula"
+          git push
