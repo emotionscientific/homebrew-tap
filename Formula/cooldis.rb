@@ -1,26 +1,25 @@
 class Cooldis < Formula
   desc "Local-first runtime for autonomous AI agents"
   homepage "https://github.com/emotionscientific/cooldis-kernel"
-  version "0.1.0-rc.7"
   license "Apache-2.0"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.1.0-rc.7/cooldis-0.1.0-rc.7-aarch64-apple-darwin.tar.gz"
-      sha256 "55dea77a5fd0f52b0c86c31b7a16154c7a6234dba95fcc54840f9a696d67c1a1"
+      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.1.0/cooldis-0.1.0-aarch64-apple-darwin.tar.gz"
+      sha256 "5e88aeeb2ccce5a2df48d46c936a54a6b318070977480fcca734c7c7bb7149d6"
     else
-      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.1.0-rc.7/cooldis-0.1.0-rc.7-x86_64-apple-darwin.tar.gz"
-      sha256 "b2100c069cf2d0e531a7b6cc37312f1703fc91b2ee2b8ff706dea341cbba4c0b"
+      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.1.0/cooldis-0.1.0-x86_64-apple-darwin.tar.gz"
+      sha256 "9d2e7d96f27537953274966caf17c3f29058a456c536dfe2a4faab2ecccd8be4"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.1.0-rc.7/cooldis-0.1.0-rc.7-aarch64-unknown-linux-gnu.tar.gz"
-      sha256 "bcbe5e069ca1bfb6daacf5551ab8769e771f64a10ff07b972a81d6337c8385ef"
+      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.1.0/cooldis-0.1.0-aarch64-unknown-linux-gnu.tar.gz"
+      sha256 "b25b5056ab4a37b6438adb27e150c872a0c90fdf0d02217b67fdad67380df8be"
     else
-      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.1.0-rc.7/cooldis-0.1.0-rc.7-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "979f18d4bce38f29c60b77e6c6c6cf82014622a57321af5f75a836103ed9d5b2"
+      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.1.0/cooldis-0.1.0-x86_64-unknown-linux-gnu.tar.gz"
+      sha256 "8dcf70f610c8c7ffd2c992fc7eff898a3813d8c2b9d5ea0b867f54f4d0b80fa7"
     end
   end
 
