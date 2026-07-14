@@ -36,6 +36,14 @@ jobs:
       - name: Test updater
         run: scripts/test-update-cooldis.sh
 
+      - name: Commit regenerated formula for validation
+        run: |
+          # brew tap clones HEAD, so make the regenerated formula visible to validation.
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula/cooldis.rb
+          git commit --allow-empty -m "Validate regenerated cooldis formula"
+
       - name: Validate formula
         run: |
           brew tap emotionscientific/tap "$GITHUB_WORKSPACE"
