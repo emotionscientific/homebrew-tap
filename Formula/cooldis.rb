@@ -5,21 +5,21 @@ class Cooldis < Formula
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.1.0/cooldis-0.1.0-aarch64-apple-darwin.tar.gz"
-      sha256 "5e88aeeb2ccce5a2df48d46c936a54a6b318070977480fcca734c7c7bb7149d6"
+      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.2.0/cooldis-0.2.0-aarch64-apple-darwin.tar.gz"
+      sha256 "89c83e6966d383817a2413070d03408e1297397e3aaeb2c221f04aee9b88b6ec"
     else
-      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.1.0/cooldis-0.1.0-x86_64-apple-darwin.tar.gz"
-      sha256 "9d2e7d96f27537953274966caf17c3f29058a456c536dfe2a4faab2ecccd8be4"
+      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.2.0/cooldis-0.2.0-x86_64-apple-darwin.tar.gz"
+      sha256 "4b92f3dd566958579210997c6266c97a20b90856df1c1dca273b7620479702e0"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.1.0/cooldis-0.1.0-aarch64-unknown-linux-gnu.tar.gz"
-      sha256 "b25b5056ab4a37b6438adb27e150c872a0c90fdf0d02217b67fdad67380df8be"
+      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.2.0/cooldis-0.2.0-aarch64-unknown-linux-gnu.tar.gz"
+      sha256 "c790fb14d0e0ec3729824f9e75da782648ee4709701f7f30e377e45a06c1115d"
     else
-      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.1.0/cooldis-0.1.0-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "8dcf70f610c8c7ffd2c992fc7eff898a3813d8c2b9d5ea0b867f54f4d0b80fa7"
+      url "https://github.com/emotionscientific/cooldis-kernel/releases/download/v0.2.0/cooldis-0.2.0-x86_64-unknown-linux-gnu.tar.gz"
+      sha256 "47ffbd475e3a923110faa4c0d23418f284995ef295ba651b8e6f08d455637274"
     end
   end
 
