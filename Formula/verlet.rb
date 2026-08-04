@@ -6,20 +6,20 @@ class Verlet < Formula
   on_macos do
     if Hardware::CPU.arm?
       url "https://github.com/emotionscientific/verlet-kernel/releases/download/v0.3.0/verlet-0.3.0-aarch64-apple-darwin.tar.gz"
-      sha256 "550a37fd0a5275fe3f1c9f98bde35519ed981fe822f8ba2341b8d2a0d01cd310"
+      sha256 "070ee66ef1791f226abb734c5a66fc87b5c762b84a94472800725525b1f9539a"
     else
       url "https://github.com/emotionscientific/verlet-kernel/releases/download/v0.3.0/verlet-0.3.0-x86_64-apple-darwin.tar.gz"
-      sha256 "f52ae8b54ceaa102688aa303f6f06921f88dcfdccdd693488a9aa62f8c278b17"
+      sha256 "b5d0d5ef35e4b70f0b763fd66d6c2b08102de1f8e8bfa3a18844153d25e6b038"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
       url "https://github.com/emotionscientific/verlet-kernel/releases/download/v0.3.0/verlet-0.3.0-aarch64-unknown-linux-gnu.tar.gz"
-      sha256 "57b85f90bf7889bb42b91372b13a4ca9cc7d2fb3ef04deab2c5f66a181ce3fa3"
+      sha256 "be2f56576d5834cba3256099250eefa919defdc6de064dabc4629264ae3a08ec"
     else
       url "https://github.com/emotionscientific/verlet-kernel/releases/download/v0.3.0/verlet-0.3.0-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "f9dc9671798bcac60370e67051def3063d761c39d6d4982bdba72d2e3027f2a7"
+      sha256 "c191678d171ff7d001f9f43ce85be33a458a34cd205047fdf744d0d2bdc0be77"
     end
   end
 
