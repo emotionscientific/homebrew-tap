@@ -7,7 +7,7 @@ require "optparse"
 require "pathname"
 require "time"
 
-REPOSITORY = "emotionscientific/cooldis-kernel"
+REPOSITORY = "emotionscientific/verlet-kernel"
 TARGETS = {
   "aarch64-apple-darwin" => ["macos", "arm"],
   "x86_64-apple-darwin" => ["macos", "intel"],
@@ -17,11 +17,11 @@ TARGETS = {
 TAG_PATTERN = /\Av\d+\.\d+\.\d+(?:-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?\z/
 
 options = {
-  output: Pathname(__dir__).join("..", "Formula", "cooldis.rb").expand_path,
+  output: Pathname(__dir__).join("..", "Formula", "verlet.rb").expand_path,
 }
 
 OptionParser.new do |parser|
-  parser.banner = "Usage: scripts/update-cooldis.rb [--tag TAG] [--release-json PATH --asset-dir DIR]"
+  parser.banner = "Usage: scripts/update-verlet.rb [--tag TAG] [--release-json PATH --asset-dir DIR]"
   parser.on("--tag TAG", "Update to an explicit release tag") { |tag| options[:tag] = tag }
   parser.on("--release-json PATH", "Read release metadata from a local fixture") { |path| options[:release_json] = path }
   parser.on("--asset-dir DIR", "Read checksum assets from a local fixture directory") { |dir| options[:asset_dir] = dir }
@@ -29,7 +29,7 @@ OptionParser.new do |parser|
 end.parse!
 
 def fail!(message)
-  warn "update-cooldis: #{message}"
+  warn "update-verlet: #{message}"
   exit 1
 end
 
@@ -112,7 +112,7 @@ def release_data(release, asset_dir)
   fail!("release assets must be an array") unless assets.is_a?(Array)
 
   checksums = TARGETS.keys.to_h do |target|
-    archive = "cooldis-#{version}-#{target}.tar.gz"
+    archive = "verlet-#{version}-#{target}.tar.gz"
     archive_assets = assets.select { |asset| asset["name"] == archive }
     checksum_assets = assets.select { |asset| asset["name"] == "#{archive}.sha256" }
     # Require one archive and one sidecar for every target before changing the formula.
@@ -138,15 +138,15 @@ def render_formula(tag, version, checksums)
   url = "https://github.com/#{REPOSITORY}/releases/download/#{tag}"
   target_block = lambda do |os, arch|
     target = TARGETS.find { |_target, selector| selector == [os, arch] }.first
-    archive = "cooldis-#{version}-#{target}.tar.gz"
+    archive = "verlet-#{version}-#{target}.tar.gz"
     "      url \"#{url}/#{archive}\"\n" \
       "      sha256 \"#{checksums.fetch(target)}\""
   end
 
   formula = +<<~RUBY
-    class Cooldis < Formula
+    class Verlet < Formula
       desc "Local-first runtime for autonomous AI agents"
-      homepage "https://github.com/emotionscientific/cooldis-kernel"
+      homepage "https://github.com/emotionscientific/verlet-kernel"
   RUBY
   formula << "  version \"#{version}\"\n" if version.include?("-")
   formula << "  license \"Apache-2.0\"\n\n"
@@ -169,15 +169,15 @@ def render_formula(tag, version, checksums)
       end
 
       def install
-        bin.install "cooldis", "cooldis-acp-agent", "cooldis-mcp-server"
-        pkgshare.install "share/cooldis/console"
+        bin.install "verlet", "verlet-acp-agent", "verlet-mcp-server"
+        man1.install "share/man/man1/verlet.1"
+        pkgshare.install "share/verlet/console"
       end
 
       test do
-        assert_match "cooldis ", shell_output("\#{bin}/cooldis --version")
-        assert_match "cooldis-acp-agent ", shell_output("\#{bin}/cooldis-acp-agent --version")
-        assert_match "Usage", shell_output("\#{bin}/cooldis-mcp-server --help")
-        assert_match "Usage", shell_output("\#{bin}/cooldis console --help")
+        assert_match "verlet ", shell_output("\#{bin}/verlet --version")
+        assert_match "verlet-acp-agent ", shell_output("\#{bin}/verlet-acp-agent --version")
+        assert_match "Usage", shell_output("\#{bin}/verlet console --help")
         assert_path_exists pkgshare/"console/index.html"
       end
     end

@@ -1,4 +1,4 @@
-name: Update Cooldis
+name: Update Verlet
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
     - cron: "23 8 * * 1"
 
 concurrency:
-  group: update-cooldis
+  group: update-verlet
 
 jobs:
   validate:
@@ -27,37 +27,37 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          result="$(scripts/update-cooldis.rb)"
+          result="$(scripts/update-verlet.rb)"
           printf '%s\n' "$result"
           tag="${result##* }"
           [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?$ ]]
           printf 'tag=%s\n' "$tag" >>"$GITHUB_OUTPUT"
 
       - name: Test updater
-        run: scripts/test-update-cooldis.sh
+        run: scripts/test-update-verlet.sh
 
       - name: Commit regenerated formula for validation
         run: |
           # brew tap clones HEAD, so make the regenerated formula visible to validation.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Formula/cooldis.rb
-          git commit --allow-empty -m "Validate regenerated cooldis formula"
+          git add Formula/verlet.rb
+          git commit --allow-empty -m "Validate regenerated Verlet formula"
 
       - name: Validate formula
         run: |
           brew tap emotionscientific/tap "$GITHUB_WORKSPACE"
-          brew style Formula/cooldis.rb
-          if grep -q '^  version "' Formula/cooldis.rb; then
-            brew audit --strict --except=version emotionscientific/tap/cooldis
+          brew style Formula/verlet.rb
+          if grep -q '^  version "' Formula/verlet.rb; then
+            brew audit --strict --except=version emotionscientific/tap/verlet
           else
-            brew audit --strict emotionscientific/tap/cooldis
+            brew audit --strict emotionscientific/tap/verlet
           fi
 
       - name: Install and test formula
         run: |
-          brew install emotionscientific/tap/cooldis
-          brew test emotionscientific/tap/cooldis
+          brew install emotionscientific/tap/verlet
+          brew test emotionscientific/tap/verlet
 
   update:
     needs: validate
@@ -74,23 +74,23 @@ jobs:
       - name: Regenerate validated formula
         env:
           GH_TOKEN: ${{ github.token }}
-        run: scripts/update-cooldis.rb --tag "${{ needs.validate.outputs.tag }}"
+        run: scripts/update-verlet.rb --tag "${{ needs.validate.outputs.tag }}"
 
       - name: Test updater
-        run: scripts/test-update-cooldis.sh
+        run: scripts/test-update-verlet.sh
 
       - name: Commit formula update
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet -- Formula/cooldis.rb; then
+          if git diff --quiet -- Formula/verlet.rb; then
             echo "Formula is already current"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           gh auth setup-git
-          git add Formula/cooldis.rb
-          test "$(git diff --cached --name-only)" = "Formula/cooldis.rb"
-          git commit -m "Update cooldis formula"
+          git add Formula/verlet.rb
+          test "$(git diff --cached --name-only)" = "Formula/verlet.rb"
+          git commit -m "Update Verlet formula"
           git push

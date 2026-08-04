@@ -1,26 +1,26 @@
-# Cooldis Homebrew Tap
+# Verlet Homebrew Tap
 
-This tap distributes the Cooldis command-line tools for macOS and Linux on
+This tap distributes the Verlet command-line tools for macOS and Linux on
 Apple silicon, Intel, and AMD64 systems. It follows the newest published
-Cooldis release and includes release candidates.
+Verlet release and includes release candidates.
 
 ## Install
 
 ```sh
-brew install emotionscientific/tap/cooldis
+brew install emotionscientific/tap/verlet
 ```
 
 ## Upgrade
 
 ```sh
 brew update
-brew upgrade cooldis
+brew upgrade verlet
 ```
 
 ## Uninstall
 
 ```sh
-brew uninstall cooldis
+brew uninstall verlet
 ```
 
 Published binaries support:

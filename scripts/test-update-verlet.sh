@@ -6,15 +6,24 @@ FIXTURES="$ROOT/test/fixtures"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
-"$ROOT/scripts/update-cooldis.rb" \
+"$ROOT/scripts/update-verlet.rb" \
   --tag v0.1.0-rc.5 \
   --release-json "$FIXTURES/release-complete.json" \
   --asset-dir "$FIXTURES/assets" \
-  --output "$TMP/cooldis.rb"
+  --output "$TMP/verlet.rb"
 
-grep -q 'version "0.1.0-rc.5"' "$TMP/cooldis.rb"
+grep -q 'class Verlet < Formula' "$TMP/verlet.rb"
+grep -q 'homepage "https://github.com/emotionscientific/verlet-kernel"' "$TMP/verlet.rb"
+grep -q 'version "0.1.0-rc.5"' "$TMP/verlet.rb"
+grep -q 'bin.install "verlet", "verlet-acp-agent", "verlet-mcp-server"' "$TMP/verlet.rb"
+grep -q 'man1.install "share/man/man1/verlet.1"' "$TMP/verlet.rb"
+grep -q 'pkgshare.install "share/verlet/console"' "$TMP/verlet.rb"
+grep -q 'assert_match "verlet ", shell_output("#{bin}/verlet --version")' "$TMP/verlet.rb"
+grep -q 'assert_match "verlet-acp-agent ", shell_output("#{bin}/verlet-acp-agent --version")' "$TMP/verlet.rb"
+grep -q 'assert_match "Usage", shell_output("#{bin}/verlet console --help")' "$TMP/verlet.rb"
+grep -q 'assert_path_exists pkgshare/"console/index.html"' "$TMP/verlet.rb"
 while read -r target checksum; do
-  grep -F -A1 "cooldis-0.1.0-rc.5-$target.tar.gz\"" "$TMP/cooldis.rb" \
+  grep -F -A1 "verlet-0.1.0-rc.5-$target.tar.gz\"" "$TMP/verlet.rb" \
     | grep -Fq "sha256 \"$checksum\""
 done <<'MAPPINGS'
 aarch64-apple-darwin b794fb034851fcd2a6f73c94a2410c5f2f53582970dbd755353150bfd1284a2c
@@ -23,7 +32,7 @@ aarch64-unknown-linux-gnu b21cd8f1755674f1393e0d8df1b7687b9f4b11423431c8caa17ed7
 x86_64-unknown-linux-gnu a9ab2686ae8c68586f1ac838977e305fc39eb54536d3a829c7d1b4bfadbc8e02
 MAPPINGS
 
-sed -n '/^  on_macos do$/,/^  end$/p' "$TMP/cooldis.rb" >"$TMP/macos.rb"
+sed -n '/^  on_macos do$/,/^  end$/p' "$TMP/verlet.rb" >"$TMP/macos.rb"
 grep -q 'aarch64-apple-darwin' "$TMP/macos.rb"
 grep -q 'x86_64-apple-darwin' "$TMP/macos.rb"
 if grep -q 'unknown-linux-gnu' "$TMP/macos.rb"; then
@@ -31,7 +40,7 @@ if grep -q 'unknown-linux-gnu' "$TMP/macos.rb"; then
   exit 1
 fi
 
-sed -n '/^  on_linux do$/,/^  end$/p' "$TMP/cooldis.rb" >"$TMP/linux.rb"
+sed -n '/^  on_linux do$/,/^  end$/p' "$TMP/verlet.rb" >"$TMP/linux.rb"
 grep -q 'aarch64-unknown-linux-gnu' "$TMP/linux.rb"
 grep -q 'x86_64-unknown-linux-gnu' "$TMP/linux.rb"
 if grep -q 'apple-darwin' "$TMP/linux.rb"; then
@@ -39,24 +48,24 @@ if grep -q 'apple-darwin' "$TMP/linux.rb"; then
   exit 1
 fi
 
-"$ROOT/scripts/update-cooldis.rb" \
+"$ROOT/scripts/update-verlet.rb" \
   --release-json "$FIXTURES/release-pages.json" \
   --asset-dir "$FIXTURES/assets" \
   --output "$TMP/discovered.rb"
-cmp "$TMP/cooldis.rb" "$TMP/discovered.rb"
+cmp "$TMP/verlet.rb" "$TMP/discovered.rb"
 
-"$ROOT/scripts/update-cooldis.rb" \
+"$ROOT/scripts/update-verlet.rb" \
   --tag v0.2.0 \
   --release-json "$FIXTURES/release-stable.json" \
   --asset-dir "$FIXTURES/stable-assets" \
   --output "$TMP/stable.rb"
-grep -q 'cooldis-0.2.0-aarch64-apple-darwin.tar.gz' "$TMP/stable.rb"
+grep -q 'verlet-0.2.0-aarch64-apple-darwin.tar.gz' "$TMP/stable.rb"
 if grep -q '^  version ' "$TMP/stable.rb"; then
   echo "stable formula unexpectedly has an explicit version" >&2
   exit 1
 fi
 
-if "$ROOT/scripts/update-cooldis.rb" \
+if "$ROOT/scripts/update-verlet.rb" \
   --tag v0.1.0-rc.5 \
   --release-json "$FIXTURES/release-incomplete.json" \
   --asset-dir "$FIXTURES/assets" \
@@ -69,9 +78,9 @@ grep -q 'release v0.1.0-rc.5 is incomplete for x86_64-unknown-linux-gnu' "$TMP/i
 test ! -e "$TMP/incomplete.rb"
 
 cp -R "$FIXTURES/assets" "$TMP/malformed-assets"
-printf '%s\n' 'not-a-checksum  cooldis-0.1.0-rc.5-aarch64-apple-darwin.tar.gz' \
-  >"$TMP/malformed-assets/cooldis-0.1.0-rc.5-aarch64-apple-darwin.tar.gz.sha256"
-if "$ROOT/scripts/update-cooldis.rb" \
+printf '%s\n' 'not-a-checksum  verlet-0.1.0-rc.5-aarch64-apple-darwin.tar.gz' \
+  >"$TMP/malformed-assets/verlet-0.1.0-rc.5-aarch64-apple-darwin.tar.gz.sha256"
+if "$ROOT/scripts/update-verlet.rb" \
   --tag v0.1.0-rc.5 \
   --release-json "$FIXTURES/release-complete.json" \
   --asset-dir "$TMP/malformed-assets" \
@@ -80,10 +89,10 @@ then
   echo "malformed checksum unexpectedly succeeded" >&2
   exit 1
 fi
-grep -q 'malformed checksum for cooldis-0.1.0-rc.5-aarch64-apple-darwin.tar.gz' "$TMP/malformed.out"
+grep -q 'malformed checksum for verlet-0.1.0-rc.5-aarch64-apple-darwin.tar.gz' "$TMP/malformed.out"
 test ! -e "$TMP/malformed.rb"
 
-if "$ROOT/scripts/update-cooldis.rb" \
+if "$ROOT/scripts/update-verlet.rb" \
   --tag not-a-release \
   --release-json "$FIXTURES/release-complete.json" \
   --asset-dir "$FIXTURES/assets" \
